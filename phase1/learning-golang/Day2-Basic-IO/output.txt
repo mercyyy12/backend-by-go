@@ -1,0 +1,4 @@
+Line 1: Hello, World!
+Line 2: This is Go.
+Line 3: Writing to a file.
+Line 4: bufio.Writer is fast!
