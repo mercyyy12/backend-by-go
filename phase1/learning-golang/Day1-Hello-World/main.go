@@ -1,49 +1,60 @@
-//Hello World and Variables
-
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
 	// Classic Hello World
 	fmt.Println("Hello, World!")
 
-	// Variable declarations with explicit type
+	// Variables
+	// Explicit type declaration
 	var name string
-	name = "john"
+	name = "John"
 	fmt.Println("Name:", name)
 
+	// Declaring and initializing with explicit type
+	var age int = 20
+	fmt.Println("Age:", age)
+
 	// Short declaration with type inference
-	name1 := "cena"
-	fmt.Println("Name1:", name1)
+	username := "Cena"
+	fmt.Println("Username:", username)
 
-	// Explicit type with initialization
-	var num int = 20
-	fmt.Println("Number:", num)
-
-	// Implicit type with initialization
-	var version = 13
+	// Implicit type
+	var version = 1.21
 	fmt.Println("Version:", version)
 
-	// Short declaration for integers and floats
-	num1 := 10
-	num2 := 10.99
-	fmt.Println("Num1:", num1)
-	fmt.Println("Num2:", num2)
+	// Short declaration for int and float
+	num1 := 42
+	num2 := 3.14
+	fmt.Println("Num1:", num1, "Num2:", num2)
 
 	// Boolean variable
-	isTrue := true
-	fmt.Println("IsTrue:", isTrue)
+	isActive := true
+	fmt.Println("IsActive:", isActive)
 
-	// Constants
-	const pi = 3.14
+	//Constants
+	const pi = 3.14159
+	const author = "Santosh"
 	fmt.Println("Pi:", pi)
+	fmt.Println("Author:", author)
 
-	// Multiple variables declaration
+	//Multiple Declarations explicit and implicit
 	var a, b, c int = 1, 2, 3
 	fmt.Println("Multiple vars:", a, b, c)
 
-	// Multiple short declarations
-	x, y, z := 4, 5, 6
-	fmt.Println("Multiple short vars:", x, y, z)
+	x, y, z := "backend", "with", "go"
+	fmt.Println("Multiple vars:", x, y, z)
+
+	// Zero values
+	var defaultInt int
+	var defaultString string
+	var defaultBool bool
+
+	fmt.Println("Default int:", defaultInt)       // 0
+	fmt.Println("Default string:", defaultString) // ""
+	fmt.Println("Default bool:", defaultBool)     // false
+
 }

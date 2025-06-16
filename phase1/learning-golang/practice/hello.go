@@ -1,39 +1,31 @@
-// range loops
-//
-// # Error handling
-//
-// defer statement
-//
-// Functions with error returns
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"strconv"
-	"strings"
 )
 
 func main() {
-	reader := bufio.NewReader(os.Stdin)
-
-	fmt.Print("Enter 10 elements: ")
-	input, err := reader.ReadString('\n')
-	if err != nil {
-		fmt.Printf("Error: \n", err)
+	// Range over Slice
+	fmt.Println(" Slice:")
+	numbers := []int{10, 20, 30, 40}
+	for index, value := range numbers {
+		fmt.Printf("Index %d: Value %d\n", index, value)
 	}
-	input = strings.TrimSpace(input)
-	input, err = strconv.Atoi(input)
-	parts := strings.Split(input, " ")
 
-	// if err != nil {
-	// 	fmt.Printf("Error: \n", err)
-	// }
-	sum := 0
-	for i := 0; i < len(input)-1; i++ {
-
-		sum += parts[i] + parts[i+1]
+	//  Range over String
+	fmt.Println("\n String (Unicode-safe):")
+	text := "Go💙Lang"
+	for i, ch := range text {
+		fmt.Printf("Index %d: Rune %q\n", i, ch)
 	}
-	fmt.Printf("the sum is: %d", sum)
+
+	//Range over Map
+	fmt.Println(" Map:")
+	person := map[string]string{
+		"name": "Santosh",
+		"city": "Kathmandu",
+	}
+	for key, value := range person {
+		fmt.Printf("Key: %s, Value: %s\n", key, value)
+	}
 }
