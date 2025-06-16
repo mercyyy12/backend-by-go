@@ -6,7 +6,7 @@ import (
 
 func main() {
 	// Classic Hello World
-	fmt.Println("Hello, World!")
+	fmt.Println("Hello, World!") //prints the text to the console with a newline at the end
 
 	// Variables
 	// Explicit type declaration
