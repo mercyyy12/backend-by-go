@@ -1,31 +1,29 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"go/scanner"
+	"os"
+	"strconv"
+	"strings"
 )
 
 func main() {
-	// Range over Slice
-	fmt.Println(" Slice:")
-	numbers := []int{10, 20, 30, 40}
-	for index, value := range numbers {
-		fmt.Printf("Index %d: Value %d\n", index, value)
-	}
+	// fmt.Printf("Enter your age: ")
+	// reader := bufio.NewReader(os.Stdin)
+	// input, err := reader.ReadString('\n')
+	// if err != nil {
+	// 	fmt.Println("error occured", err)
+	// 	return
+	// }
+	// age, err := strconv.Atoi(strings.TrimSpace(input))
+	// if err != nil {
+	// 	fmt.Println("error occured", err)
+	// 	return
+	// }
 
-	//  Range over String
-	fmt.Println("\n String (Unicode-safe):")
-	text := "Go💙Lang"
-	for i, ch := range text {
-		fmt.Printf("Index %d: Rune %q\n", i, ch)
-	}
+	scanner := bufio.NewReader(os.Stdin)
+	input := scanner.ReadString("")
 
-	//Range over Map
-	fmt.Println(" Map:")
-	person := map[string]string{
-		"name": "Santosh",
-		"city": "Kathmandu",
-	}
-	for key, value := range person {
-		fmt.Printf("Key: %s, Value: %s\n", key, value)
-	}
 }

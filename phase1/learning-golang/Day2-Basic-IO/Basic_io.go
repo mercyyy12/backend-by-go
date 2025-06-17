@@ -1,130 +1,144 @@
 package main
 
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
 func main() {
-	// fmt basic input examples
+	// Uncomment the section you want to test.
 
-	/*
-		var age int
-		var health, name string
+	// fmtBasicInput()
+	// bufioReaderInput()
+	// bufioFileReader()
+	// bufioScannerInput()
+	// bufioFileScanner()
+	// bufioWriterExample()
+}
 
-		fmt.Print("Enter your age: ") //prints the text to the console without a newline
-		fmt.Scan(&age) // Reads input until space or newline
+// fmt package basic input examples
+func fmtBasicInput() {
+	var age int
+	var health, name string
 
-		fmt.Println("How are you feeling today? ") //prints the text to the console with a newline at the end
-		fmt.Scanln(&health) // reads input until newline
+	fmt.Print("Enter your age: ") // prints text without newline
+	fmt.Scan(&age)                // reads input until space or newline
 
-		fmt.Print("What is your name? ")
-		fmt.Scanln(&name)
+	fmt.Println("How are you feeling today?") // prints text with newline
+	fmt.Scanln(&health)                       // reads input until newline
 
-		fmt.Printf("Hello %s, your age is %d and you're feeling %s today.\n", name, age, health) //prints formatted output
+	fmt.Print("What is your name? ")
+	fmt.Scanln(&name)
 
-		// Example of fmt.Scanf
-		var day int
-		var month string
-		fmt.Print("Enter your birthday day and month: ")
-		fmt.Scanf("%d %s", &day, &month) //reads formatted input according to the format specifier
-		fmt.Printf("Your birthday is on %d of %s.\n", day, month)
-	*/
+	fmt.Printf("Hello %s, your age is %d and you're feeling %s today.\n", name, age, health)
 
-	// bufio.Reader (stdin)
+	// Example of fmt.Scanf with multiple inputs
+	var day int
+	var month string
+	fmt.Print("Enter your birthday day and month: ")
+	fmt.Scanf("%d %s", &day, &month)
+	fmt.Printf("Your birthday is on %d of %s.\n", day, month)
+}
 
-	/*
-		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("Enter your age: ")
-		input, err := reader.ReadString('\n') // reads until newline
+// bufio.Reader from stdin
+func bufioReaderInput() {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter your age: ")
+	input, err := reader.ReadString('\n') // reads until newline
+	if err != nil {
+		fmt.Println("Error reading input:", err)
+		return
+	}
+
+	input = strings.TrimSpace(input) // clean newline/spaces
+	age, err := strconv.Atoi(input)  // convert string to int
+	if err != nil {
+		fmt.Println("Invalid input")
+		return
+	}
+	fmt.Println("You are", age, "years old.")
+}
+
+// bufio.Reader reading from file
+func bufioFileReader() {
+	file, err := os.Open("data.txt") // open file data.txt file must exist in the same directory.
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	reader := bufio.NewReader(file)
+	fmt.Println("Reading file line by line:")
+	for {
+		line, err := reader.ReadString('\n')
 		if err != nil {
-			fmt.Println("Error reading input:", err)
-			return
+			break
 		}
+		fmt.Print(line)
+	}
+}
 
-		input = strings.TrimSpace(input) // clean up space
-		age, err := strconv.Atoi(input)  // convert string to int
-		if err != nil {
-			fmt.Println("Invalid input! Please enter a number.")
-			return
-		}
-		fmt.Println("You are", age, "years old.")
-	*/
+// bufio.Scanner from stdin
+func bufioScannerInput() {
+	scanner := bufio.NewScanner(os.Stdin)
+	fmt.Print("Enter your age: ")
+	if !scanner.Scan() {
+		fmt.Println("Failed to read input.")
+		return
+	}
+	input := strings.TrimSpace(scanner.Text())
+	age, err := strconv.Atoi(input)
+	if err != nil {
+		fmt.Println("Invalid age")
+		return
+	}! Please enter a number.
+	fmt.Println("You are", age, "years old.")
+}
 
-	//bufio.Reader (file input)
+// bufio.Scanner reading from file
+func bufioFileScanner() {
+	file, err := os.Open("data.txt") //data.txt file must exist in the same directory.
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
 
-	/*
-		file, err := os.Open("data.txt") // open existing file
-		if err != nil {
-			fmt.Println("error in file", err)
-			return
-		}
-		defer file.Close()
+	scanner := bufio.NewScanner(file)
+	fmt.Println("File content line by line:")
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
+	}
 
-		reader := bufio.NewReader(file)
-		for {
-			line, err := reader.ReadString('\n') // read line by line
-			if err != nil {
-				break
-			}
-			fmt.Print("Line: ", line)
-		}
-	*/
+	if err := scanner.Err(); err != nil {
+		fmt.Println("Scan error:", err)
+	}
+}
 
-	// bufio.Scanner (stdin)
+// bufio.Writer writing to file
+func bufioWriterExample() {
+	file, err := os.Create("output.txt")
+	if err != nil {
+		fmt.Println("Error creating file:", err)
+		return
+	}
+	defer file.Close()
 
-	/*
-		scanner := bufio.NewScanner(os.Stdin)
-		fmt.Print("Enter your age: ")
-		if !scanner.Scan() {
-			fmt.Println("Failed to read input.")
-			return
-		}
-		input := scanner.Text()
-		input = strings.TrimSpace(input)
-		age, err := strconv.Atoi(input)
-		if err != nil {
-			fmt.Println("Invalid age!")
-			return
-		}
-		fmt.Println("You are", age, "years old.")
-	*/
+	writer := bufio.NewWriter(file)
 
-	// bufio.Scanner (file input)
+	lines := []string{
+		"Line 1: Hello, World!\n",
+		"Line 2: This is Go.\n",
+		"Line 3: Writing to a file.\n",
+	}
 
-	/*
-		file, err := os.Open("data.txt") // open file for reading
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
-		defer file.Close()
-
-		scanner := bufio.NewScanner(file)
-		for scanner.Scan() {
-			fmt.Println("Line:", scanner.Text()) // print each line
-		}
-
-		if err := scanner.Err(); err != nil {
-			fmt.Println("Scan error:", err)
-		}
-	*/
-
-	//bufio.Writer (write to file)
-
-	/*
-	   file, err := os.Create("output.txt") // create a new file
-
-	   	if err != nil {
-	   		fmt.Println("Error creating file:", err)
-	   		return
-	   	}
-
-	   defer file.Close() // close file when function ends
-
-	   writer := bufio.NewWriter(file)
-
-	   // Write multiple lines to the buffer
-	   writer.WriteString("Line 1: Hello, World!\n")
-	   writer.WriteString("Line 2: This is Go.\n")
-	   writer.WriteString("Line 3: Writing to a file.\n")
-	   writer.WriteString("Line 4: bufio.Writer is fast!\n")
-
-	   writer.Flush() // flush buffer to file
-	*/
+	for _, line := range lines {
+		writer.WriteString(line)
+	}
+	writer.Flush()
+	fmt.Println("Data written to output.txt successfully.")
 }
