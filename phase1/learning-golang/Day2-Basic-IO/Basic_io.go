@@ -95,7 +95,7 @@ func bufioScannerInput() {
 	if err != nil {
 		fmt.Println("Invalid age")
 		return
-	}! Please enter a number.
+	}
 	fmt.Println("You are", age, "years old.")
 }
 
