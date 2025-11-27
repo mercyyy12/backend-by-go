@@ -5,32 +5,29 @@ This is a simple guide to install Visual Studio Code (VS Code) and prepare it fo
 
 You’ll also install useful extensions.
 
-# 1. Install VS Code via Snap
+# 1. Install VS Code
 sudo snap install code --classic
 
-# 2. Verify installation
+# 2. Verify Installation
 code --version
-# Output: code version x.x.x
+# Example: code version 1.xx.x
 
-# 3. Launch VS Code from terminal
+# 3. Launch VS Code
 code
 
-# 4. Install Extensions
-Inside VS Code: Open the Extensions tab (Ctrl + Shift + X), search and install the following:
-
-Go = Official Go extension by the Go Team
-GitLens = (optional) commit history, blame, authorship
-Code Runner = (Optional) Run code snippets easily
-Docker = (Optional) Docker integration and management
-REST Client = (Optional) Test APIs from within VS Code
+# 4. Install Extensions (inside VS Code, Ctrl+Shift+X)
+# - Go (Official Go extension by the Go Team)
+# - GitLens (optional: commit history, blame, authorship)
+# - Code Runner (optional: run code snippets easily)
+# - Docker (optional: Docker integration)
+# - REST Client (optional: test APIs from within VS Code)
 
 # 5. Configure Auto Save & Format on Save
-# Open settings (Ctrl + ,) or open settings.json and paste the following inside settings.json:
-
-{
-   "files.autoSave": "afterDelay",
-   "editor.formatOnSave": true,
-   "go.formatTool": "gopls"
-}
+# Open Settings → Open JSON (or Ctrl + , then Open Settings JSON) and add:
+echo '{
+    "files.autoSave": "afterDelay",
+    "editor.formatOnSave": true,
+    "go.formatTool": "gopls"
+}' >> ~/.config/Code/User/settings.json
 
 Done!!
