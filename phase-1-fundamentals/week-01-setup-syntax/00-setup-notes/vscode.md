@@ -16,14 +16,14 @@ code --version
 code
 
 # 4. Install Extensions (inside VS Code: Ctrl + Shift + X)
-# Go           -> Official Go extension by the Go Team
-# GitLens      -> Optional: commit history, blame, authorship
-# Code Runner  -> Optional: run code snippets easily
-# Docker       -> Optional: Docker integration
-# REST Client  -> Optional: test APIs from within VS Code
+Go           -> Official Go extension by the Go Team
+GitLens      -> Optional: commit history, blame, authorship
+Code Runner  -> Optional: run code snippets easily
+Docker       -> Optional: Docker integration
+REST Client  -> Optional: test APIs from within VS Code
 
 # 5. Configure Auto Save & Format on Save
-# Open Settings JSON (Ctrl + , → Open Settings JSON) and add:
+# Open Settings JSON (Ctrl + , -> Open Settings JSON) and add:
 cat <<EOL >> ~/.config/Code/User/settings.json
 {
     "files.autoSave": "afterDelay",
