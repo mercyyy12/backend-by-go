@@ -1,77 +1,74 @@
-**Quick Note:**
-This is a quick-start guide to install Git and push your code to GitHub.
+# Quick Git & GitHub Guide
 
-If you follow the steps you'll be able to push your local project to GitHub successfully.
+This is a **quick-start guide** to install Git and push your code to GitHub.
+By following these steps, you can push your local project to GitHub successfully.
 
-A full Git/GitHub guide (with branches, merges, pull requests) will be added soon.
+> A full Git/GitHub guide (branches, merges, pull requests) will be added soon.
 
+## Git Command Reference
 
-## What each command means
-git init = Start Git tracking in this folder
-git status = Show what’s changed, staged, or untracked
-git add . = Stage all files to be saved
-git commit -m "your commit message" = Save a version of your code
-git branch -M main = Rename the current branch to 'main'
-git remote add origin YOUR_LINK = Connect this folder to a GitHub repository
-git push -u origin main = Upload your code to GitHub and set it as default
+| Command | Purpose |
+|---------|---------|
+| `git init` | Start Git tracking in the folder |
+| `git status` | Show what files changed or staged |
+| `git add .` | Stage all files for commit |
+| `git commit -m "message"` | Save a version of your code |
+| `git branch -M main` | Rename current branch to main |
+| `git remote add origin <URL>` | Connect folder to GitHub repo |
+| `git push -u origin main` | Upload code to GitHub |
 
+---
 
-# Git Installation & Setup (Linux)
-# 1. Install Git
+## Installation & Setup (Linux)
+
+```bash
 sudo apt update
 sudo apt install git
-
-# 2. Verify installation
 git --version
-# Output: git version x.x.x
-
-# 3. Configure Git identity (used for all commits)
 git config --global user.name "Your Name"
 git config --global user.email "your@email.com"
+````
 
-# To push your local project to GitHub
-# Follow: A or B.
+---
 
-# A. If Starting from Scratch (New Local Project)
-# Only use this if you're creating a new project.
-# Don't run 'git init' in a cloned repo.
+## Push a New Local Project to GitHub
 
-# 4. Initialize Git
+```bash
+# Initialize Git
 git init
 
-# 5. Check status
+# Check status
 git status
 
-# 6. Stage your files
+# Stage files
 git add .
 
-# 7. Double-check what’s staged
-git status
-
-# 8. Commit your code
+# Commit changes
 git commit -m "initial commit"
 
-# 9. Rename branch to 'main'
+# Rename branch to main
 git branch -M main
 
-# 10. Link to your GitHub repo
-git remote add origin https://github.com/your-username/your-repo.git
+# Link to GitHub repo
+git remote add origin https://github.com/username/repo.git
 
-# 11. Push to GitHub
+# Push to GitHub
 git push -u origin main
+```
 
+---
 
-# B. If You Cloned from GitHub
-# Skip git init and git remote add. Your project is already a Git repo.
+## Push Changes to a Cloned Repo
 
-# Check file status
+```bash
+# Check status
 git status
 
 # Stage changes
 git add .
 
-# Commit
+# Commit changes
 git commit -m "your message"
 
-# Push to GitHub
+# Push updates
 git push
