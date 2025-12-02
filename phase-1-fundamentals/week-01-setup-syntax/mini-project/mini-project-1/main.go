@@ -1,12 +1,11 @@
 /*
-	Challenge description:
-
+Challenge description:
 Variables & types (string, int, bool)
 User input with bufio.Reader
 String to int conversion
 Boolean logic (yes/no input)
 Constants and iota
-Formatted output (fmt.Printf)
+Formatted output with fmt.Printf
 */
 package main
 
