@@ -25,7 +25,7 @@ outer:
 
 		// if otp is correct
 		if text == otp {
-			fmt.Println("successfully entered!")
+			fmt.Println("Access granted!")
 			break outer
 		}
 		chance--
