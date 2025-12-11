@@ -8,7 +8,8 @@ type person struct {
 }
 
 func main() {
-	Embeded_structure()
+	Json_tags()
+	// Embeded_structure()
 
 	// creating struct instance
 	p1 := person{"Mercyyy", 25}
