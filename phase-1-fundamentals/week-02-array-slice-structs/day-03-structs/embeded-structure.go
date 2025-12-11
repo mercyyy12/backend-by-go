@@ -50,9 +50,9 @@ func Embeded_structure() {
 		fmt.Scanf("%d", &p[i].phone_number)
 	}
 
-	// to display the data
-	for i := 0; i < n; i++ {
-		fmt.Printf("The name of %v student = %s\nAge = %v\nTemporary address = %v\nPhone number = %v\n", i+1, p[i].name, p[i].age, p[i].temp_address, p[i].phone_number)
+	// to display the data using range
+	for i, s := range p {
+		fmt.Printf("The name of student %v = %s\nAge = %v\nTemporary address = %v\nPhone number = %v\n",
+			i+1, s.name, s.age, s.temp_address, s.phone_number)
 	}
-
 }
