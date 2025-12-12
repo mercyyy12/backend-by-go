@@ -24,10 +24,10 @@ func Json_tags() {
 
 	// marshalling (go struct to json)
 	data, _ := json.MarshalIndent(e, "", "")
-	fmt.Println(string(data))
+	fmt.Println("The data after marshalling JSON is: \n", string(data))
 
 	// unmarshalling (json to go struct)
 	var emp Employee
 	json.Unmarshal([]byte(data), &emp)
-	fmt.Println("Unmarshalled Struct:", emp)
+	fmt.Println("The data after Unmarshalling JSON is: \n", emp)
 }
