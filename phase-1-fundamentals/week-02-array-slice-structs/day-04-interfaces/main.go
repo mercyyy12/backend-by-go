@@ -65,8 +65,8 @@ func main() {
 	var ni interface{} = nil // Interface is nil
 	fmt.Println(ni == nil)
 
-	var e *email = nil // Interface holds a typed nil
-	var isnil notifier = e
-	fmt.Println(isnil == nil)
+	// var e *email = nil // Interface holds a typed nil
+	// var isnil notifier = e
+	// fmt.Println(isnil == nil)
 
 }
