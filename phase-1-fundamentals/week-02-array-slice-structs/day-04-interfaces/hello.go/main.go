@@ -6,216 +6,189 @@ import (
 	"time"
 )
 
+var playerMap = make(map[string]*Player)
+var enemyMap = make(map[string]*Enemy)
+
+// Random number generator seeded with current time
 var r = rand.New(rand.NewSource(time.Now().UnixNano()))
 
-// var enemyStore = make([]*Enemy, 0)
-// var playerStore = make([]*Player, 0)
-// var enemyMap = make(map[string]*Enemy)
-// var playerMap = make(map[string]*Player)
+// Counter function to generate incremental numbers (used for enemy naming)
 var c = counter()
 
-var playerInterface = make([]Character, 0)
-var enemyInterface = make([]Character, 0)
-
+// Defines the behavior all characters must have
 type Character interface {
-	addPlayer() error
-	Attack() int
-	Hpreduced(int) int
-	showname() string
+	Attack(int) int    // returns the damage dealt
+	Hpreduced(int) int // returns remaining HP
+	showname() string  // returns the character's name
+	Health() int
 }
 
+// Player struct
 type Player struct {
 	Name string
 	Hp   int
 	Hit  int
 }
 
+// Enemy struct
 type Enemy struct {
 	Name string
 	Hp   int
 	Hit  int
 }
 
-func (p *Player) addPlayer() error {
+func (p *Player) Health() int {
+	return p.Hp
+}
+
+func (e *Enemy) Health() int {
+	return e.Hp
+}
+
+// Function to add a new player and initialize HP
+func addPlayer(p *Player) {
 	var playerName string
 	fmt.Printf("Enter the name of the player: ")
-	fmt.Scanf("%s", &playerName)
+	fmt.Scanf("%s", &playerName) // Read player name from user
 	p.Name = playerName
-	p.Hp = 100
-
-	playerInterface = append(playerInterface, p)
-	// playerMap[p.Name] = p
-	// playerStore = append(playerStore, p)
-	return nil
+	p.Hp = 100 // Set starting HP
+	playerMap[p.Name] = p
 }
 
-func (e *Enemy) addPlayer() error {
-	enemyName := fmt.Sprintf("Enemy%d", c())
+// Function to add enemy with a unique name and initialize HP
+func addEnemy(e *Enemy) {
+	enemyName := fmt.Sprintf("Enemy%d", c()) // Generate name like Enemy1, Enemy2, ...
 	e.Name = enemyName
 	e.Hp = 100
-	enemyInterface = append(enemyInterface, e)
-	// enemyMap[e.Name] = e
-	// enemyStore = append(enemyStore, e)
-	return nil
+	enemyMap[e.Name] = e
 }
 
+// Reduce the player's HP by the damage taken
 func (playerGotDamage *Player) Hpreduced(dmg int) int {
 	playerGotDamage.Hp -= dmg
 	return playerGotDamage.Hp
 }
 
-func (playername *Player) showname() string {
-	return playername.Name
-}
-
-func (enemyname *Enemy) showname() string {
-	return enemyname.Name
-}
-
+// Reduce the enemy's HP by the damage taken
 func (enemyGotDamage *Enemy) Hpreduced(dmg int) int {
 	enemyGotDamage.Hp -= dmg
 	return enemyGotDamage.Hp
 }
 
-var dmg int
+// Return the player's name
+func (playername *Player) showname() string {
+	return playername.Name
+}
 
-func (playerAttacked *Player) Attack() int {
+// Return the enemy's name
+func (enemyname *Enemy) showname() string {
+	return enemyname.Name
+}
 
-	fmt.Printf("\n%s's turn to attack:\nEnter the hit (10-20): ", playerAttacked.Name)
-	fmt.Scanf("%d", &dmg)
-
-	if dmg > 20 || dmg < 10 {
-		for {
-			fmt.Printf("Enter in valid range (10-20): ")
-			fmt.Scanf("%d", &dmg)
-
-			if dmg <= 20 && dmg >= 10 {
-				break
-			}
-		}
-	}
-
-	var prob = r.Intn(8)
+// Player attack method with block or extra damage
+func (playerAttacked *Player) Attack(dmg int) int {
+	var prob = r.Intn(8) // Random factor for variability
 	if prob%2 == 0 {
-		// fmt.Println("Damage Blocked! +")
 		playerAttacked.Hit = dmg - prob
 		fmt.Printf("Damage Blocked! Damage received: %d-%d = %d\n", dmg, dmg-playerAttacked.Hit, playerAttacked.Hit)
 	} else {
-		// fmt.Println("Extra Damage!")
 		playerAttacked.Hit = dmg + prob
-		fmt.Printf("Extra Damage! Damage received: %d+%d = %d\n", dmg, dmg+playerAttacked.Hit, playerAttacked.Hit)
+		fmt.Printf("Extra Damage! Damage received: %d+%d = %d\n", dmg, playerAttacked.Hit-dmg, playerAttacked.Hit)
 	}
 
 	return playerAttacked.Hit
 }
 
-func (enemyAttacked *Enemy) Attack() int {
-	fmt.Printf("\n%s attacked:\n", enemyAttacked.Name)
-	var eprob = r.Intn(10)
-
-	min := 10
-	max := 20
-	dmg = rand.Intn(max-min+1) + min
+// Enemy attack method with random variation
+func (enemyAttacked *Enemy) Attack(dmg int) int {
+	var eprob = r.Intn(10) // Random factor for variability
 
 	if eprob%2 == 0 {
-		// fmt.Println("Damage Blocked!")
 		enemyAttacked.Hit = dmg - eprob
 		fmt.Printf("Damage Blocked! Damage received: %d-%d = %d\n", dmg, dmg-enemyAttacked.Hit, enemyAttacked.Hit)
 	} else {
 		enemyAttacked.Hit = dmg + eprob
-		fmt.Printf("Extra Damage! Damage received: %d+%d = %d\n", dmg, dmg+enemyAttacked.Hit, enemyAttacked.Hit)
+		fmt.Printf("Extra Damage! Damage received: %d+%d = %d\n", dmg, enemyAttacked.Hit-dmg, enemyAttacked.Hit)
 	}
-	// enemyAttacked.Hit = 10 + eprob
+
 	return enemyAttacked.Hit
 }
 
-func addplayer(character Character) error {
-	return character.addPlayer()
-}
-
-func hitDamage(character Character, reducedHp int) int {
-	return character.Hpreduced(reducedHp)
-}
-
-func attackOpp(character Character) int {
-	return character.Attack()
-}
-
-func namedisplay(character Character) string {
-	return character.showname()
-}
-
 func main() {
-
 	var n int
-	// var dmg int
-	var win = 2
-	// fmt.Println(win)
-	fmt.Printf("Enter number of players: ")
-	fmt.Scanf("%d", &n)
+	var dmg int
 
+	fmt.Printf("Enter number of players: ")
+	fmt.Scanf("%d", &n) // Read number of players
+
+	playerInterface := make([]Character, 0) // Slice of Character interfaces for players
+	enemyInterface := make([]Character, 0)  // Slice of Character interfaces for enemies
+
+	// Create players and enemies
 	for i := 0; i < n; i++ {
 		p := &Player{}
-		p.addPlayer() // stores in global slice/map directly
+		addPlayer(p) // Get player info from user
+		playerInterface = append(playerInterface, p)
+		// playerMap = append(playerMap, p)
+
 		e := &Enemy{}
-		e.addPlayer()
+		addEnemy(e) // Create enemy with unique name
+		enemyInterface = append(enemyInterface, e)
 	}
 
-	// for i, v := range playerInterface {
-	// 	fmt.Println(i, v)
-	// }
-
-	// for i, v := range enemyInterface {
-	// 	fmt.Println(i, v)
-	// }
-
+	// Battle loop
 	for {
-
 		for i := 0; i < n; i++ {
-			// fmt.Printf("\n%s's turn to attack:\nEnter the hit (10-20): ", namedisplay(playerInterface[i]))
-			// fmt.Scanf("%d", &dmg)
 
-			// if dmg > 20 || dmg < 10 {
-			// 	for {
-			// 		fmt.Printf("Enter in valid range (10-20): ")
-			// 		fmt.Scanf("%d", &dmg)
-
-			// 		if dmg <= 20 && dmg >= 10 {
-			// 			break
-			// 		}
-			// 	}
-			// }
-
-			ehealthReduced := attackOpp(playerInterface[i])
-
-			fmt.Printf("%s's remaining health = %d \n", namedisplay(enemyInterface[i]), hitDamage(enemyInterface[i], ehealthReduced))
-			phealthReduced := attackOpp(enemyInterface[i])
-			fmt.Printf("%s's remaining health = %d \n", namedisplay(playerInterface[i]), hitDamage(playerInterface[i], phealthReduced))
-
-			// 	dmg := addplayer(playerInterface[i])
-			// 	enemyHealth, enemyAttack := enemyInterface.Attack(dmg, 0)
-			// 	fmt.Printf("%s's HP reduced by %d\nTotal remaining health = %d.\n", enemyStore[i].Name, dmg, enemyHealth)
-
-			// 	_, playerStore[i].Hp = playerInterface.Attack(0, enemyAttack)
-
-			// 	fmt.Printf("\n%s Attacks!\n%d Damage dealt.\nTotal remaining health of %s = %d\n", enemyStore[i].Name, enemyAttack, playerStore[i].Name, playerStore[i].Hp)
-
-			// 	if playerStore[i].Hp <= 0 {
-			// 		win = 0
-			// 		fmt.Printf("%s won!", enemyStore[i].Name)
-			// 		return
-			// 	} else if enemyStore[i].Hp <= 0 {
-			// 		win = 1
-			// 		fmt.Printf("%s won!", playerStore[i].Name)
-			// 		return
-			// 	}
-			// }
-			if win == 1 || win == 0 {
-				break
+			for i := 0; i < n; i++ {
+				fmt.Printf("\n%s's remaining HP = %d\tID = %d", enemyInterface[i].showname(), enemyInterface[i].Health(), i)
 			}
+
+			var x int
+			fmt.Printf("\nEnter the ID of an enemy you want to attack: ")
+			fmt.Scanf("%d", &x)
+
+			// s := strconv.Itoa(x)
+			for k, v := range enemyMap {
+				fmt.Println( v.Name, v.Hp)
+			}
+
+			// Player's turn to attack
+			fmt.Printf("\n%s's turn to attack:\nEnter the hit (10-20): ", playerInterface[i].showname())
+			fmt.Scanf("%d", &dmg)
+
+			// Validate damage input
+			for dmg < 10 || dmg > 20 {
+				fmt.Printf("Enter in valid range (10-20): ")
+				fmt.Scanf("%d", &dmg)
+			}
+
+			// Player attacks enemy
+			ehealthReduced := playerInterface[i].Attack(dmg)
+			enemyHpAfter := enemyInterface[x].Hpreduced(ehealthReduced)
+
+			if enemyHpAfter <= 0 {
+				delete(enemyMap, enemyInterface[x].showname())
+			}
+			fmt.Printf("%s's remaining health = %d \n", enemyInterface[i].showname(), enemyHpAfter)
+
+			// Enemy's turn to attack
+			fmt.Printf("\n%s attacked:\n", enemyInterface[x].showname())
+			min, max := 15, 20
+			damage := r.Intn(max-min+1) + min // Random damage between 15-20
+
+			phealthReduced := enemyInterface[i].Attack(damage)
+			playerHealthAfter := playerInterface[i].Hpreduced(phealthReduced)
+
+			if playerHealthAfter <= 0 {
+				delete(playerMap, playerInterface[i].showname())
+			}
+			fmt.Printf("%s's remaining health = %d \n", playerInterface[i].showname(), playerHealthAfter)
 		}
 	}
 }
+
+// Counter function returns a closure that increments count each call
 func counter() func() int {
 	count := 0
 	return func() int {
