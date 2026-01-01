@@ -4,9 +4,7 @@ import "fmt"
 
 func main() {
 
-	// fmt.Println("")
-
-	a, b := 5, 5
+	a, b := 5, 10
 	result, err := div(a, b)
 	if err != nil {
 		fmt.Println("error occured")
@@ -14,14 +12,23 @@ func main() {
 	fmt.Println("a divided by b =", result)
 
 	for i := 0; i < 5; i++ {
+
+		// Outer anon func
 		func(n int) {
+
+			// Inner anon func with defer to catch panic
 			defer func() {
+
+				// recover returns the panic value
 				if r := recover(); r != nil {
 					fmt.Println("Recovered from panic in iteration", n, ":", r)
 				}
 			}()
+
+			// this runs first and then the defer func
 			process(n)
-		}(i)
+
+		}(i) // Immediate execution if outer anon func
 	}
 
 }
