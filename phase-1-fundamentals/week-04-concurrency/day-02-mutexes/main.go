@@ -25,6 +25,7 @@ func main() {
 				// critical section
 				balance += 10
 
+				// If inside loop then do not use defer
 				mu1.Unlock() // released lock
 			}
 		})
@@ -43,6 +44,22 @@ func main() {
 	// 	}()
 	// }
 
+	counter := 5
+
+	go func() {
+		mu1.Lock()
+		defer mu1.Unlock() // using defer is fine here
+		counter++
+	}()
+
+	go func() {
+		mu1.Lock()
+		defer mu1.Unlock() // using defer is fine here
+		counter++
+	}()
+
 	wg.Wait()            // block the main untill all wg.Done() is called
+	fmt.Println(counter) //7
 	fmt.Println(balance) // 50000
+
 }
