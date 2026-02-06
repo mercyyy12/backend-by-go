@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -121,16 +122,12 @@ var successCounter = 0
 var failedCounter = 0
 
 func main() {
+	var wg sync.WaitGroup
 	start := time.Now()
 
 	defer func() {
 		fmt.Println("Runtime:", time.Since(start))
 	}()
-	for i := 1; i <= 5; i++ {
-
-		// this runs first and then the defer func
-		go Worker(i)
-	}
 
 	var n int
 	fmt.Println("--Job Processor--")
@@ -185,8 +182,14 @@ func main() {
 
 			}()
 
-			fmt.Printf("All jobs processed: %d success, %d failed, %d recovered from panic", successCounter, panicCounter, failedCounter)
+			for i := 1; i <= 5; i++ {
+				wg.Add(1)
+				go Worker(i)
+				wg.Done()
+			}
 
+			fmt.Printf("All jobs processed: %d success, %d failed, %d recovered from panic", successCounter, panicCounter, failedCounter)
+			wg.Wait()
 		case 4:
 			fmt.Println("shutting down...")
 			return

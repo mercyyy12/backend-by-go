@@ -1,180 +1,121 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"strconv"
-	"strings"
+	"sync"
 	"time"
 )
 
+// ID generator function for tasks
 var c = countId()
-var ch = make(chan int)
 
-var storeEmail = make(map[int]*structEmail)
-var storeImage = make(map[int]*structImage)
-var storeReport = make(map[int]*structReport)
-var storeId = make([]int, 0)
+// used the 'data' interface to hold any task type
+var storedata = make(map[int]data)
 
-type structEmail struct {
-	emailId   int
-	emailTime time.Time
-	Payload   string
-}
+// worker goroutine to process task
+func goWorkers(id int, ch <-chan data) {
 
-type structImage struct {
-	imageId   int
-	imageTime time.Time
-	Payload   string
-}
-
-type structReport struct {
-	reportId   int
-	reportTime time.Time
-	Payload    string
-}
-
-func (e *structEmail) addEmail(payload string) int {
-	e.emailId = c()
-	e.emailTime = time.Now()
-	e.Payload = payload
-	storeEmail[e.emailId] = e
-	storeId = append(storeId, e.emailId)
-	return e.emailId
-}
-
-func (i *structImage) addImage(payload string) int {
-	i.Payload = payload
-	i.imageTime = time.Now()
-	i.imageId = c()
-	storeImage[i.imageId] = i
-	storeId = append(storeId, i.imageId)
-	return i.imageId
-}
-
-func (r *structReport) addReport(payload string) int {
-	r.Payload = payload
-	r.reportTime = time.Now()
-	r.reportId = c()
-	storeReport[r.reportId] = r
-	storeId = append(storeId, r.reportId)
-	return r.reportId
-}
-
-func goWorkers() {
-
-	for i := 1; i <= 5; i++ {
-		// checks if
-		go func() {
-			val, ok := <-ch // receive from channel
-			if !ok {        // ok == false = channel is closed
-				fmt.Println("channel has closed")
-				// break
-			}
-			fmt.Printf("worker %d picked up task %d \n", i, val)
-		}()
+	for j := range ch {
+		i, v := j.worker()
+		fmt.Printf("worker %v picked up task %v (%v) \n", id, i, v)
+		time.Sleep(2 * time.Second) // simulating processing time
 	}
+	fmt.Printf("worker %v completed task successfully!\n", id)
 }
 
 func main() {
+
 	fmt.Println("Produce Consumer Task Queue")
+
+loop:
 	for {
-		fmt.Printf("Enter:\n1. Add task\n2. List tasks\n3. Start processing\n4. Exit\nEnter a number: ")
+		fmt.Printf("Options:\n1. Add task\n2. List tasks\n3. Start processing\n4. Exit\nEnter a number: ")
 		menuOptions, _ := inputInt()
 		switch menuOptions {
 		case 1:
-			fmt.Printf("Enter task type (email / image / report): ")
-			taskType, _ := input()
+			for {
+				fmt.Printf("Enter task type (email / image / report): ")
+				taskType, _ := input()
 
-			switch taskType {
-			case "email":
-				task := &structEmail{}
-				fmt.Printf("Enter payload (to:msg): ")
-				payload, _ := input()
-				id := task.addEmail(payload)
-				fmt.Printf("Task added (ID: %d)", id)
+				switch taskType {
+				case "email":
+					task := &structEmail{}
+					fmt.Printf("Enter payload (to:msg): ")
+					payload, _ := input()
+					id := task.addEmail(payload)
+					fmt.Printf("Task added (ID: %d)\n", id)
 
-			case "image":
-				task := &structImage{}
-				fmt.Printf("Enter payload (file:resize): ")
-				payload, _ := input()
-				id := task.addImage(payload)
-				fmt.Printf("Task added (ID: %d)", id)
+				case "image":
+					task := &structImage{}
+					fmt.Printf("Enter payload (file:resize): ")
+					payload, _ := input()
+					id := task.addImage(payload)
+					fmt.Printf("Task added (ID: %d)\n", id)
 
-			case "report":
-				task := &structReport{}
-				fmt.Printf("Enter payload (title:content): ")
-				payload, _ := input()
-				id := task.addReport(payload)
-				fmt.Printf("Task added (ID: %d)", id)
-			}
+				case "report":
+					task := &structReport{}
+					fmt.Printf("Enter payload (title:content): ")
+					payload, _ := input()
+					id := task.addReport(payload)
+					fmt.Printf("Task added (ID: %d)\n", id)
 
-		case 2:
-			for _, v := range storeId {
-				val1, exist := storeImage[v]
-				if !exist {
-					val, exist := storeEmail[v]
-					if !exist {
-						val2, exist := storeReport[v]
-						if !exist {
-							continue
-						} else {
-							fmt.Printf("ID: %d | Type: | Time: %v | Payload: %s\n", val2.reportId, val2.reportTime.Format("15:04:05"), val2.Payload)
-						}
+				default:
+					fmt.Println("Invalid task type, try again.")
+					continue
+				}
+
+				for {
+					fmt.Printf("Would you like to add another task? (y/n): ")
+					choice, _ := input()
+					if choice == "y" {
+						break
+					} else if choice == "n" {
+						goto loop
 					} else {
-						fmt.Printf("ID: %d\t|\tType: \t|\tTime: %v\t|\tPayload: %s\n", val.emailId, val.emailTime.Format("15:04:05"), val.Payload)
+						fmt.Println("Invalid choice. Enter y or n.")
 					}
-				} else {
-					fmt.Printf("ID: %d\t|\tType: \t|\tTime: %v\t|\tPayload: %s\n", val1.imageId, val1.imageTime.Format("15:04:05"), val1.Payload)
 				}
 			}
 
-		case 3:
-			goWorkers()
-
-			for i, v := range storeId {
-
-				fmt.Println("sending data", i)
-				ch <- v
+		case 2:
+			// list all task
+			for _, v := range storedata {
+				fmt.Println(v.showData())
 			}
-			// closing a channel after sending all values
-			close(ch)
 
+		case 3:
+			// start processing tasks withs workers
+			start := time.Now()
+			var wg sync.WaitGroup
+			var ch = make(chan data, 10)
+			fmt.Println("launching 5 workers......")
+
+			// start 5 worker goroutines
+			for w := 1; w <= 5; w++ {
+				id := w
+				wg.Go(func() {
+					goWorkers(id, ch)
+				})
+			}
+
+			// send task to channels
+			wg.Go(func() {
+				for _, v := range storedata {
+					ch <- v
+				}
+				close(ch)
+			})
+
+			wg.Wait() // waits for all workers to finish
+			fmt.Printf("All tasks finished!\n Total runtime: %v\n", time.Since(start).Seconds())
+
+		case 4:
+			fmt.Println("Exiting program...")
+			return // exit main
+
+		default:
+			fmt.Println("Invalid option. Enter 1–4.")
 		}
 
-	}
-}
-
-func input() (string, error) {
-	reader := bufio.NewReader(os.Stdin)
-	text, err := reader.ReadString('\n')
-	if err != nil {
-		return "thik xaina", fmt.Errorf("Input lida erro %w", err)
-	}
-	text = strings.TrimSpace(text)
-	return text, nil
-}
-
-func inputInt() (int, error) {
-	reader := bufio.NewReader(os.Stdin)
-	text, err := reader.ReadString('\n')
-	if err != nil {
-		return -1, fmt.Errorf("integer Input lida error %w", err)
-	}
-
-	text = strings.TrimSpace(text)
-	num, err := strconv.Atoi(text)
-	if err != nil {
-		return 0, fmt.Errorf("int conversion ma error")
-	}
-	return num, nil
-}
-
-func countId() func() int {
-	count := 0
-	return func() int {
-		count++
-		return count
 	}
 }
